@@ -1,4 +1,5 @@
 import React from 'react';
+import { MdDelete } from "react-icons/md";
 
 const ContactItem = ({ name, number, onDelete }) => (
   <li style={{ marginBottom: '10px' }}>
@@ -8,7 +9,7 @@ const ContactItem = ({ name, number, onDelete }) => (
       onClick={onDelete} 
       style={{ marginLeft: '10px' }}
     >
-      Delete
+      <MdDelete size="20px" />
     </button>
   </li>
 );

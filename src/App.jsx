@@ -5,6 +5,8 @@ import Form from "./Components/Form";
 import Filter from "./Components/Filter";
 import ContactList from "./Components/ContactList";
 
+const CONTACTS_KEY = "phonebook_contacts";
+
 class App extends Component {
   state = {
     contacts: [
@@ -15,6 +17,28 @@ class App extends Component {
     ],
     filter: "",
   };
+
+
+  componentDidMount() {
+    const savedContacts = localStorage.getItem(CONTACTS_KEY);
+    
+    if (savedContacts) {
+      try {
+        const parsedContacts = JSON.parse(savedContacts);
+        this.setState({ contacts: parsedContacts });
+      } catch (error) {
+        console.error("Помилка при читанні з localStorage: ", error);
+      }
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { contacts } = this.state;
+
+    if (contacts !== prevState.contacts) {
+      localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
+    }
+  }
 
   addContact = (newContactData) => {
     const { contacts } = this.state;
@@ -53,31 +77,31 @@ class App extends Component {
     );
   };
   
-deleteContact = (contactId) => {
-  this.setState((prevState) => ({
-    contacts: prevState.contacts.filter((contact) => contact.id !== contactId),
-  }));
-};
+  deleteContact = (contactId) => {
+    this.setState((prevState) => ({
+      contacts: prevState.contacts.filter((contact) => contact.id !== contactId),
+    }));
+  };
 
- render() {
-  const { filter } = this.state;
-  const visibleContacts = this.getVisibleContacts();
+  render() {
+    const { filter } = this.state;
+    const visibleContacts = this.getVisibleContacts();
 
-  return (
-    <div style={{ padding: '20px' }}>
-      <h1>Phonebook</h1>
-      <Form onSubmit={this.addContact} />
+    return (
+      <div style={{ padding: '20px' }}>
+        <h1>Phonebook</h1>
+        <Form onSubmit={this.addContact} />
 
-      <h2>Contacts</h2>
-      <Filter value={filter} onChange={this.changeFilter} />
-      
-      <ContactList 
-        contacts={visibleContacts} 
-        onDeleteContact={this.deleteContact} 
-      />
-    </div>
-  );
-}
+        <h2>Contacts</h2>
+        <Filter value={filter} onChange={this.changeFilter} />
+        
+        <ContactList 
+          contacts={visibleContacts} 
+          onDeleteContact={this.deleteContact} 
+        />
+      </div>
+    );
+  }
 }
 
 export default App;
